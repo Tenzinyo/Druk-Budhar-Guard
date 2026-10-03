@@ -1,0 +1,51 @@
+{
+  "name": "BioTerrace Sentinel",
+  "short_name": "BioTerrace",
+  "description": "Offline-capable slope stability auditor and bio-engineering prescriber for mountain communities.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1f0f",
+  "theme_color": "#2d6a2d",
+  "lang": "en",
+  "categories": ["agriculture", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/audit.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "label": "Slope audit with FoS result and bio-engineering prescription"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Audit",
+      "short_name": "Audit",
+      "description": "Run a slope stability audit",
+      "url": "/?action=audit",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Road Bulletin",
+      "short_name": "Roads",
+      "description": "Check mountain pass status",
+      "url": "/?action=roads",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}

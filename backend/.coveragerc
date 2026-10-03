@@ -1,0 +1,25 @@
+[run]
+source = app
+omit =
+    app/db/road_cache.db
+    */__init__.py
+    app/audio_cache/*
+
+[report]
+show_missing   = True
+skip_empty     = True
+precision      = 1
+# Fail the coverage step if total drops below 80 %
+fail_under     = 80
+exclude_lines  =
+    # Defensive: never reached in normal flow
+    raise NotImplementedError
+    # Graceful degradation branches tested via mocks
+    except Exception:
+        return None
+    except Exception:
+        pass
+
+[html]
+directory = htmlcov
+title     = BioTerrace Sentinel Coverage Report

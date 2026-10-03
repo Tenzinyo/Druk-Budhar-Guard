@@ -1,0 +1,42 @@
+{
+  "region_id": "andes",
+  "language": "es",
+  "secondary_language": "qu",
+  "climate_focus": "frost_drought",
+  "description": "Blueprint region — Andean Altiplano (Peru, Bolivia, Ecuador). Freeze-thaw cycles and seasonal drought on shallow Andosol and Leptosol soils above 3500 m.",
+  "species": [
+    {
+      "id": "ichu",
+      "name_local": "Ichu / Paja Brava",
+      "name_scientific": "Festuca orthophylla",
+      "root_cohesion_kpa": { "min": 2.0, "max": 6.0 },
+      "slope_band": "low",
+      "water_requirement": "very_low",
+      "source": "World Bank Andes Resilience DPL 2020; FAO Watershed Management Andes 2017"
+    },
+    {
+      "id": "polylepis",
+      "name_local": "Queñoa / Quewiña",
+      "name_scientific": "Polylepis spp.",
+      "root_cohesion_kpa": { "min": 6.0, "max": 12.0 },
+      "slope_band": "high",
+      "water_requirement": "low",
+      "source": "World Bank Bolivia Watershed Programme 2019; CONDESAN Polylepis Reforestation Guide 2018"
+    }
+  ],
+  "slope_thresholds": {
+    "low_max_deg": 25.0,
+    "mid_max_deg": 40.0
+  },
+  "cohesion_ranges": {
+    "ichu_kpa": [2.0, 6.0],
+    "polylepis_kpa": [6.0, 12.0]
+  },
+  "soil_defaults": {
+    "gamma_kn_m3": 16.5,
+    "phi_deg": 28.0,
+    "c_prime_kpa": 2.0,
+    "gamma_w_kn_m3": 9.81
+  },
+  "road_sources": []
+}

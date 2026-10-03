@@ -1,0 +1,22 @@
+[
+  {
+    "source_name": "Dochula Pass",
+    "country": "Bhutan",
+    "elevation_m": 3116,
+    "status": "open",
+    "reason": null,
+    "severity": "none",
+    "last_updated": "2025-10-03T06:00:00Z",
+    "notes": "Seasonal surface patching complete. Fog advisory in effect above 2800 m."
+  },
+  {
+    "source_name": "Pelela Pass",
+    "country": "Bhutan",
+    "elevation_m": 3420,
+    "status": "restricted",
+    "reason": "Monsoon-season surface damage — reduced speed, one-lane alternating above km 18",
+    "severity": "minor",
+    "last_updated": "2025-10-03T06:00:00Z",
+    "notes": "Department of Roads Bhutan advisory. Expect 30-min delays. Heavy vehicles restricted 20:00–06:00."
+  }
+]

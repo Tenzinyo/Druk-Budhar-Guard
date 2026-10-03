@@ -1,0 +1,42 @@
+{
+  "region_id": "east_africa",
+  "language": "am",
+  "secondary_language": "sw",
+  "climate_focus": "highland_gully_erosion",
+  "description": "Blueprint region — Ethiopian & East African Highlands (Ethiopia, Rwanda, Uganda). Bimodal rainfall driving rill and gully erosion on steep cultivated hillsides.",
+  "species": [
+    {
+      "id": "teff_bund",
+      "name_local": "Teff / Taff",
+      "name_scientific": "Eragrostis tef",
+      "root_cohesion_kpa": { "min": 1.5, "max": 4.0 },
+      "slope_band": "low",
+      "water_requirement": "low",
+      "source": "World Bank Ethiopia SLMP-II 2018; FAO SWC in Semi-Arid Africa 2012"
+    },
+    {
+      "id": "sesbania",
+      "name_local": "Sesbania / Sesban",
+      "name_scientific": "Sesbania sesban",
+      "root_cohesion_kpa": { "min": 5.0, "max": 10.0 },
+      "slope_band": "mid",
+      "water_requirement": "moderate",
+      "source": "World Bank SLMP-II Ethiopia 2018; ICRAF Agroforestry Gully Plug Manual 2016"
+    }
+  ],
+  "slope_thresholds": {
+    "low_max_deg": 25.0,
+    "mid_max_deg": 40.0
+  },
+  "cohesion_ranges": {
+    "teff_kpa": [1.5, 4.0],
+    "sesbania_kpa": [5.0, 10.0]
+  },
+  "soil_defaults": {
+    "gamma_kn_m3": 17.0,
+    "phi_deg": 26.0,
+    "c_prime_kpa": 1.0,
+    "gamma_w_kn_m3": 9.81
+  },
+  "road_sources": []
+}

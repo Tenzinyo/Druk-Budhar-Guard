@@ -1,0 +1,70 @@
+# ============================================================
+# BioTerrace Sentinel — Docker Compose
+# Services: FastAPI backend + local Ollama LLM
+#
+# Usage:
+#   1. cp .env.example .env && fill in API keys
+#   2. docker compose up --build
+#   3. Pull Ollama model (one-time, while connected):
+#      docker compose exec ollama ollama pull llama3.2:1b
+#   4. API available at http://localhost:8000
+#      Docs at         http://localhost:8000/docs
+# ============================================================
+
+version: "3.9"
+
+services:
+
+  # ── FastAPI Backend ──────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bioterrace_api
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      # Override Ollama host to use the service name inside Docker network
+      - OLLAMA_HOST=http://ollama:11434
+    volumes:
+      # Persist SQLite edge cache across restarts
+      - road_cache_db:/app/app/db
+      # Persist synthesized audio notes and templates across restarts
+      - audio_cache:/app/app/audio_cache
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ── Local Ollama LLM (zero-cost, zero-cloud) ─────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: bioterrace_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      # Persist pulled models across restarts (avoids re-downloading)
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+# ── Named volumes ─────────────────────────────────────────────
+volumes:
+  road_cache_db:
+    driver: local
+  audio_cache:
+    driver: local
+  ollama_models:
+    driver: local

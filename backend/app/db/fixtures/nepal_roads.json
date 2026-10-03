@@ -1,0 +1,22 @@
+[
+  {
+    "source_name": "Prithvi Highway",
+    "country": "Nepal",
+    "route": "Kathmandu–Pokhara (Mugling section)",
+    "status": "restricted",
+    "reason": "Landslide debris at km 42 near Kurintar — single-lane alternate routing in operation",
+    "severity": "major",
+    "last_updated": "2025-10-03T06:00:00Z",
+    "notes": "Nepal Department of Roads advisory. Clearance works underway. Expect 1–2 hr delays. Nepal Army and NRRC deployed."
+  },
+  {
+    "source_name": "Karnali Highway",
+    "country": "Nepal",
+    "route": "Surkhet–Jumla",
+    "status": "open",
+    "reason": null,
+    "severity": "none",
+    "last_updated": "2025-10-03T06:00:00Z",
+    "notes": "Post-monsoon clearance complete. Surface condition fair. 4WD recommended above Dunai."
+  }
+]

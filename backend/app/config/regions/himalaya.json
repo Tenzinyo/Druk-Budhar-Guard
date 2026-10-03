@@ -1,0 +1,57 @@
+{
+  "region_id": "himalaya",
+  "language": "ne",
+  "secondary_language": "hi",
+  "climate_focus": "monsoon",
+  "description": "Pilot region — Bhutan & Nepal Himalayan foothills. Monsoon-driven shallow translational slides on residual colluvial soils.",
+  "species": [
+    {
+      "id": "vetiver",
+      "name_local": "Khas Khas",
+      "name_scientific": "Chrysopogon zizanioides",
+      "root_cohesion_kpa": { "min": 5.0, "max": 18.0 },
+      "slope_band": "low",
+      "water_requirement": "low",
+      "source": "ICIMOD 2011 — Bio-engineering for Slope Protection and Erosion Control; World Bank DRRIP Nepal 2019"
+    },
+    {
+      "id": "amliso",
+      "name_local": "Amliso / Amriso",
+      "name_scientific": "Thysanolaena latifolia",
+      "root_cohesion_kpa": { "min": 3.0, "max": 8.0 },
+      "slope_band": "low",
+      "water_requirement": "moderate",
+      "source": "Nepal Department of Roads Bio-engineering Manual 2013"
+    },
+    {
+      "id": "dendrocalamus",
+      "name_local": "Tama Bans / Choya Bans",
+      "name_scientific": "Dendrocalamus hamiltonii",
+      "root_cohesion_kpa": { "min": 10.0, "max": 18.0 },
+      "slope_band": "high",
+      "water_requirement": "moderate",
+      "source": "World Bank Mountain Infrastructure Resilience Programme 2021; ICIMOD Bamboo Slope Stabilisation Report 2018"
+    }
+  ],
+  "slope_thresholds": {
+    "low_max_deg": 25.0,
+    "mid_max_deg": 40.0
+  },
+  "cohesion_ranges": {
+    "vetiver_kpa": [5.0, 18.0],
+    "amliso_kpa": [3.0, 8.0],
+    "dendrocalamus_kpa": [10.0, 18.0]
+  },
+  "soil_defaults": {
+    "gamma_kn_m3": 18.0,
+    "phi_deg": 30.0,
+    "c_prime_kpa": 0.0,
+    "gamma_w_kn_m3": 9.81
+  },
+  "road_sources": [
+    { "name": "Dochula Pass", "country": "Bhutan", "elevation_m": 3116 },
+    { "name": "Pelela Pass", "country": "Bhutan", "elevation_m": 3420 },
+    { "name": "Prithvi Highway", "country": "Nepal", "route": "Kathmandu–Pokhara" },
+    { "name": "Karnali Highway", "country": "Nepal", "route": "Surkhet–Jumla" }
+  ]
+}
