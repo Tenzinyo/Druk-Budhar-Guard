@@ -159,6 +159,27 @@ export function resolveAudioUrl(endpoint: string): string {
   return `${BASE_URL}${endpoint}`;
 }
 
+/** GET /voice/convai-url — get a signed ElevenLabs ConvAI WebSocket URL */
+export async function getConvaiUrl(
+  region: Region,
+  risk_level: string,
+  fos: number,
+  prescription: string,
+): Promise<{ url: string; system_prompt: string; first_message: string; context: unknown }> {
+  const params = new URLSearchParams({
+    region,
+    risk_level,
+    fos: fos.toFixed(2),
+    prescription,
+  });
+  const resp = await fetch(`${BASE_URL}/voice/convai-url?${params.toString()}`);
+  if (!resp.ok) {
+    const body = await resp.json().catch(() => ({}));
+    throw new Error(body?.detail ?? 'Could not get conversation URL. Check ELEVENLABS_AGENT_ID in .env');
+  }
+  return resp.json();
+}
+
 /** GET /health — liveness probe for connectivity detection */
 export async function checkHealth(): Promise<boolean> {
   try {

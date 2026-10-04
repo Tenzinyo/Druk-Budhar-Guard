@@ -15,6 +15,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { AuditReport, Region } from '../lib/api';
+import { getConvaiUrl } from '../lib/api';
 
 interface Props {
   report: AuditReport;
@@ -146,19 +147,12 @@ export default function ConversationalAgent({ report, region }: Props) {
 
     try {
       // 1. Get signed WebSocket URL + context from backend
-      const params = new URLSearchParams({
+      const { url, system_prompt, first_message, context } = await getConvaiUrl(
         region,
-        risk_level:   report.risk_level,
-        fos:          report.fos_baseline.toFixed(2),
-        prescription: report.prescriptions[0]?.method ?? 'bioengineering',
-      });
-
-      const res = await fetch(`http://localhost:8000/voice/convai-url?${params}`);
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body?.detail ?? 'Could not get conversation URL. Check ELEVENLABS_AGENT_ID in .env');
-      }
-      const { url, system_prompt, first_message, context } = await res.json();
+        report.risk_level,
+        report.fos_baseline,
+        report.prescriptions[0]?.method ?? 'bioengineering',
+      );
 
       // 2. Create 16 kHz AudioContext
       const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;

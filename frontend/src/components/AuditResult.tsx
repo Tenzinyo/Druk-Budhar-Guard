@@ -1,5 +1,6 @@
 import type { AuditReport, Region } from '../lib/api';
 import ConversationalAgent from './ConversationalAgent';
+import VoicePlayer from './VoicePlayer';
 
 interface Props {
   report: AuditReport;
@@ -116,7 +117,10 @@ export default function AuditResult({ report, region, onClear }: Props) {
         </div>
       )}
 
-      {/* Conversational voice advisor */}
+      {/* One-shot TTS audio note — offline-capable via cached templates */}
+      <VoicePlayer report={report} region={region} />
+
+      {/* Live two-way conversational advisor — requires connectivity */}
       <ConversationalAgent report={report} region={region} />
 
       {/* Run another */}
