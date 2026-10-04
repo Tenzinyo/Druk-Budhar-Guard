@@ -19,11 +19,13 @@ It replaces fragile, multi-million dollar concrete retaining walls with **indige
 |---|---|
 | Offline-capable | FastAPI engine + SQLite edge cache runs fully air-gapped |
 | Zero paid cloud LLM | Local Ollama `llama3.2:1b` for all reasoning and translation |
-| Cheap devices | Lightweight REST API + PWA frontend (Lovable Pro) |
+| Cheap devices | Lightweight REST API + React PWA + Capacitor native app |
 | Local languages | Ollama formats Hindi/Nepali scripts; ElevenLabs synthesizes audio |
 | Real-world data | Bright Data Web Unlocker → SQLite edge cache with circuit breaker |
 | Global replicability | JSON region configs swap species/parameters with zero code change |
-| Zero additional spend | Bright Data ($300 credit), ElevenLabs Creator, Lovable Pro — $0.00 overage |
+| Zero additional spend | Bright Data ($300 credit), ElevenLabs Creator — $0.00 overage |
+| Native mobile | Capacitor wraps PWA into native Android APK + iOS IPA |
+| Real tilt meter | `@capacitor/motion` reads device accelerometer for slope angle |
 
 ---
 
@@ -46,9 +48,16 @@ It replaces fragile, multi-million dollar concrete retaining walls with **indige
 └─────────────────────────────────────────────────────┘
          ↕ REST / JSON
 ┌─────────────────────────────────────────────────────┐
-│  Lovable Pro PWA Frontend                          │
-│  Tilt-meter simulator · Offline/online toggle      │
-│  Audio playback · Low-literacy physical units      │
+│  React + Vite PWA Frontend                         │
+│  ├── Web browser (PWA, installable)                │
+│  ├── Android native APK  (Capacitor v6)            │
+│  └── iOS native IPA      (Capacitor v6)            │
+│                                                     │
+│  TiltMeter — SVG gauge + real accelerometer        │
+│  AuditForm — physical unit hints for low literacy  │
+│  RoadBulletin — pass status cards + data_source    │
+│  VoicePlayer — offline audio playback              │
+│  ConnectivityBadge — live online/cached/offline    │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -108,40 +117,65 @@ Druk-Budhar-Guard/
 ├── .env.example
 ├── .gitignore
 ├── README.md
-└── backend/
-    ├── requirements.txt
-    ├── main.py
-    └── app/
-        ├── config/
-        │   ├── settings.py
-        │   └── regions/
-        │       ├── himalaya.json
-        │       ├── andes.json
-        │       └── east_africa.json
-        ├── engine/
-        │   ├── geotech.py            ✅ (Phase 2)
-        │   ├── bio_prescriptions.py  ✅ (Phase 2)
-        │   └── ollama_client.py      (Phase 5)
-        ├── models/
-        │   ├── slope_input.py
-        │   └── audit_report.py
-        ├── routers/
-        │   ├── audit.py              ✅ (Phase 3)
-        │   ├── road_bulletin.py      ✅ (Phase 4)
-        │   └── voice.py              ✅ (Phase 5)
-        ├── db/
-        │   ├── database.py           (Phase 4)
-        │   └── fixtures/
-        │       ├── bhutan_roads.json (Phase 4)
-        │       └── nepal_roads.json  (Phase 4)
-        └── tests/
-            ├── conftest.py           (Phase 3)
-            ├── test_geotech.py       (Phase 2)
-            ├── test_bio_prescriptions.py (Phase 2)
-            ├── test_audit_router.py  (Phase 3)
-            ├── test_road_bulletin.py (Phase 4)
-            ├── test_voice.py         (Phase 5)
-            └── test_region_configs.py (Phase 6)
+├── docker-compose.yml
+├── backend/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── pytest.ini
+│   ├── .coveragerc
+│   ├── main.py
+│   └── app/
+│       ├── config/
+│       │   ├── settings.py
+│       │   └── regions/
+│       │       ├── himalaya.json
+│       │       ├── andes.json
+│       │       └── east_africa.json
+│       ├── engine/
+│       │   ├── geotech.py            ✅
+│       │   ├── bio_prescriptions.py  ✅
+│       │   └── ollama_client.py      ✅
+│       ├── models/
+│       │   ├── slope_input.py
+│       │   └── audit_report.py
+│       ├── routers/
+│       │   ├── audit.py              ✅
+│       │   ├── road_bulletin.py      ✅
+│       │   └── voice.py              ✅
+│       ├── db/
+│       │   ├── database.py           ✅
+│       │   └── fixtures/
+│       │       ├── bhutan_roads.json
+│       │       └── nepal_roads.json
+│       └── tests/
+│           ├── conftest.py
+│           ├── test_geotech.py             (20 tests)
+│           ├── test_bio_prescriptions.py   (28 tests)
+│           ├── test_audit_router.py        (37 tests)
+│           ├── test_road_bulletin.py       (35 tests)
+│           ├── test_voice.py               (38 tests)
+│           └── test_region_configs.py      (57 tests)
+└── frontend/
+    ├── index.html
+    ├── package.json
+    ├── tsconfig.json
+    ├── vite.config.ts
+    ├── capacitor.config.ts
+    └── src/
+        ├── index.tsx
+        ├── index.css
+        ├── App.tsx                   (in progress)
+        └── lib/
+        │   ├── api.ts                ✅  TypeScript API client
+        │   ├── offlineStorage.ts     ✅  IndexedDB cache layer
+        │   └── deviceSensors.ts      ✅  Accelerometer + network + haptics
+        └── components/
+            ├── ConnectivityBadge.tsx (in progress)
+            ├── TiltMeter.tsx         (in progress)
+            ├── AuditForm.tsx         (in progress)
+            ├── AuditResult.tsx       (in progress)
+            ├── RoadBulletin.tsx      (in progress)
+            └── VoicePlayer.tsx       (in progress)
 ```
 
 ---
@@ -156,11 +190,13 @@ Druk-Budhar-Guard/
 | Phase 4 | Bright Data road bulletin + SQLite edge cache | ✅ Complete |
 | Phase 5 | Ollama vernacular client + ElevenLabs voice pipeline | ✅ Complete |
 | Phase 6 | Full integration, docker-compose, coverage report | ✅ Complete |
-| Phase 7 | Lovable Pro PWA frontend | Pending |
+| Phase 7 | React PWA + Capacitor native app (iOS/Android) | In Progress |
 
 ---
 
 ## Quickstart (Local Development)
+
+### Backend
 
 ```bash
 # 1. Create virtual environment and install dependencies
@@ -183,6 +219,57 @@ uvicorn main:app --reload --port 8000
 # 5. Run all tests (no .env or Ollama required — all external calls mocked)
 pytest tests/ -v --tb=short --cov=app --cov-report=term-missing
 ```
+
+### Frontend — Web / PWA
+
+```bash
+cd frontend
+npm install
+npm run dev         # → http://localhost:5173
+# Open in Chrome → "Install app" in address bar to install as PWA
+```
+
+### Frontend — Native Android
+
+> Prerequisites: Android Studio + JDK 17 installed.
+
+```bash
+cd frontend
+npm run build              # compile TypeScript + Vite bundle → dist/
+npx cap add android        # one-time: scaffold android/ directory
+npm run cap:android        # sync + open Android Studio
+# In Android Studio: Run > Run 'app' (or Build > Generate Signed APK)
+```
+
+For live-reload on a physical device:
+
+```bash
+npm run cap:run:android    # bundles, pushes to device, hot-reloads on save
+```
+
+### Frontend — Native iOS
+
+> Prerequisites: Xcode 15+ on macOS, Apple Developer account for device builds.
+
+```bash
+cd frontend
+npm run build
+npx cap add ios            # one-time: scaffold ios/ directory
+npm run cap:ios            # sync + open Xcode
+# In Xcode: select your device or simulator → press Run (▶)
+```
+
+### When to Add .env API Keys
+
+| Key | When needed |
+|---|---|
+| `BRIGHTDATA_*` | Phase 4 live scraping (tests pass without it) |
+| `ELEVENLABS_API_KEY` + `ELEVENLABS_VOICE_ID` | Phase 5 live audio (falls back to template/text offline) |
+| `OLLAMA_HOST` | Only if Ollama runs on a non-default host |
+
+Tests run fully without any `.env` file — all external calls are mocked.
+
+---
 
 ## Docker Deployment
 
@@ -209,6 +296,8 @@ curl http://localhost:8000/health
 curl "http://localhost:8000/road-bulletin/"   # → data_source: "fixture"
 ```
 
+---
+
 ## Test Coverage
 
 ```bash
@@ -216,7 +305,6 @@ cd backend
 pytest tests/ -v --tb=short --cov=app --cov-report=term-missing --cov-fail-under=80
 ```
 
-Expected coverage targets:
 | Module | Target |
 |---|---|
 | `app/engine/geotech.py` | 100% |
@@ -226,6 +314,25 @@ Expected coverage targets:
 | `app/routers/road_bulletin.py` | 85%+ |
 | `app/routers/voice.py` | 85%+ |
 | `app/db/database.py` | 80%+ |
+
+---
+
+## Frontend — Key Design Decisions
+
+### Two-layer Offline Guarantee
+| Layer | Technology | Scope |
+|---|---|---|
+| Browser/App | IndexedDB (`offlineStorage.ts`) | Last audit + bulletin per region |
+| Backend | SQLite + JSON fixtures | Road data, audio templates |
+
+### Native Accelerometer (Real Tilt Meter)
+Farmers hold the phone flat against the slope face. `@capacitor/motion` reads the device accelerometer and derives slope angle via `θ = arcsin(|ay| / g)`. Falls back to a manual slider on desktop browsers.
+
+### Circuit Breaker Labels
+Every API response includes a `data_source` / `source` field (`live | cache | fixture | cache | template | text_only`). The `ConnectivityBadge` shows this to farmers so they know how fresh the data is.
+
+### Low-Literacy UX
+All prescription spacing and depth values are expressed in physical body-unit strings (`"two paces between rows / ~1.5 m"`, `"one forearm deep / ~40 cm"`), not just metric numbers.
 
 ---
 
