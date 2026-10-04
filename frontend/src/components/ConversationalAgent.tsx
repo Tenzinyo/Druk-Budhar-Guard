@@ -197,8 +197,13 @@ export default function ConversationalAgent({ report, region, language }: Props)
           ws.send(JSON.stringify({ user_audio_chunk: b64 }));
         };
 
+        // Route through silent gain — required to keep ScriptProcessor firing
+        // but prevents mic audio from playing back through speakers (feedback loop)
+        const silentGain = ctx.createGain();
+        silentGain.gain.value = 0;
         source.connect(processor);
-        processor.connect(ctx.destination);
+        processor.connect(silentGain);
+        silentGain.connect(ctx.destination);
         setState('listening');
       };
 

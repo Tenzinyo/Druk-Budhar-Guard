@@ -64,9 +64,9 @@ class VoiceSynthesisRequest(BaseModel):
     script: str = Field(
         ...,
         min_length=1,
-        max_length=140,
+        max_length=500,
         description=(
-            "Vernacular advisory text to synthesise. Max 140 characters. "
+            "Vernacular advisory text to synthesise. Max 500 characters. "
             "Produced by POST /audit → vernacular_script field."
         ),
     )

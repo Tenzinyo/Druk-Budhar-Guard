@@ -22,9 +22,10 @@ export default function VoicePlayer({ report, region, language }: Props) {
     setState('loading');
     setError(null);
     try {
-      const text = report.vernacular_script
+      const raw = report.vernacular_script
         ?? tr.riskFallback[report.risk_level as keyof typeof tr.riskFallback]
         ?? report.risk_level;
+      const text = raw.slice(0, 500);
       const res = await synthesizeVoice(text, region, report.risk_level, language);
       setScript(res.script);
       if (res.audio_available && res.audio_endpoint) {
