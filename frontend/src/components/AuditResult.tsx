@@ -5,6 +5,7 @@ import VoicePlayer from './VoicePlayer';
 interface Props {
   report: AuditReport;
   region: Region;
+  language: string;
   onClear: () => void;
 }
 
@@ -27,7 +28,7 @@ function FoSBar({ value }: { value: number }) {
   );
 }
 
-export default function AuditResult({ report, region, onClear }: Props) {
+export default function AuditResult({ report, region, language, onClear }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
@@ -118,10 +119,10 @@ export default function AuditResult({ report, region, onClear }: Props) {
       )}
 
       {/* One-shot TTS audio note — offline-capable via cached templates */}
-      <VoicePlayer report={report} region={region} />
+      <VoicePlayer report={report} region={region} language={language} />
 
       {/* Live two-way conversational advisor — requires connectivity */}
-      <ConversationalAgent report={report} region={region} />
+      <ConversationalAgent report={report} region={region} language={language} />
 
       {/* Run another */}
       <button

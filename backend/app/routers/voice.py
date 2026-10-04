@@ -221,16 +221,54 @@ async def synthesize_voice(payload: VoiceSynthesisRequest) -> VoiceSynthesisResp
 
 # ── Conversational AI signed URL ──────────────────────────────────────────────
 
-_REGION_LANGUAGE: dict[str, str] = {
-    "himalaya": "Nepali",
-    "andes": "Spanish",
+# Default language per region (used when no explicit language is selected)
+_REGION_DEFAULT_LANGUAGE: dict[str, str] = {
+    "himalaya":    "Nepali",
+    "andes":       "Spanish",
     "east_africa": "Amharic",
 }
 
-_FIRST_MESSAGE: dict[str, str] = {
-    "himalaya": "नमस्ते! म तपाईंको भिरालो सुरक्षा सल्लाहकार हुँ। कुनै प्रश्न छ?",
-    "andes": "¡Hola! Soy su asesor de seguridad de pendientes. ¿Tiene alguna pregunta?",
-    "east_africa": "ሰላም! የቁልቁለት ደህንነት አማካሪ ነኝ። ጥያቄ አለዎት?",
+# Per-language config: first message in that language + name for system prompt
+_LANGUAGE_CONFIG: dict[str, dict[str, str]] = {
+    # ── Himalaya ──────────────────────────────────────────────────────────────
+    "Nepali": {
+        "first_message": "नमस्ते! म तपाईंको भिरालो सुरक्षा सल्लाहकार हुँ। कुनै प्रश्न छ?",
+        "prompt_lang":   "Nepali",
+    },
+    "Hindi": {
+        "first_message": "नमस्ते! मैं आपका ढलान सुरक्षा सलाहकार हूँ। कोई प्रश्न है?",
+        "prompt_lang":   "Hindi",
+    },
+    "Dzongkha": {
+        "first_message": "ཀུཟུཟང་པོ་ལགས། ང་ཁྱེད་རང་གི་རི་རྒྱབ་བདེ་འཇགས་ཀྱི་གྲོས་མཁན་ཡིན།",
+        "prompt_lang":   "Dzongkha",
+    },
+    # ── Andes ─────────────────────────────────────────────────────────────────
+    "Spanish": {
+        "first_message": "¡Hola! Soy su asesor de seguridad de pendientes. ¿Tiene alguna pregunta?",
+        "prompt_lang":   "Spanish",
+    },
+    "Quechua": {
+        "first_message": "Allinllachu! Noqam qanwan rimanaypaq kaypi kani. Ima tapukuytam munanki?",
+        "prompt_lang":   "Quechua",
+    },
+    "Portuguese": {
+        "first_message": "Olá! Sou seu consultor de segurança de encostas. Tem alguma pergunta?",
+        "prompt_lang":   "Portuguese",
+    },
+    # ── East Africa ───────────────────────────────────────────────────────────
+    "Amharic": {
+        "first_message": "ሰላም! የቁልቁለት ደህንነት አማካሪ ነኝ። ጥያቄ አለዎት?",
+        "prompt_lang":   "Amharic",
+    },
+    "Swahili": {
+        "first_message": "Habari! Mimi ni mshauri wako wa usalama wa mteremko. Una swali?",
+        "prompt_lang":   "Swahili",
+    },
+    "French": {
+        "first_message": "Bonjour! Je suis votre conseiller en sécurité des pentes. Avez-vous des questions?",
+        "prompt_lang":   "French",
+    },
 }
 
 
@@ -243,6 +281,7 @@ async def get_convai_url(
     risk_level: str = Query(default="STABLE"),
     fos: float = Query(default=1.5),
     prescription: str = Query(default="bioengineering"),
+    language: str = Query(default=""),
 ) -> dict:
     agent_id = settings.elevenlabs_agent_id
     api_key  = settings.elevenlabs_api_key
@@ -271,21 +310,24 @@ async def get_convai_url(
             detail=f"ElevenLabs ConvAI sign-in failed: {exc}",
         )
 
-    language = _REGION_LANGUAGE.get(region, "Nepali")
-    first_message = _FIRST_MESSAGE.get(region, _FIRST_MESSAGE["himalaya"])
+    # Resolve language: explicit param > region default
+    resolved_language = language if language in _LANGUAGE_CONFIG else _REGION_DEFAULT_LANGUAGE.get(region, "Nepali")
+    lang_cfg = _LANGUAGE_CONFIG.get(resolved_language, _LANGUAGE_CONFIG["Nepali"])
+    first_message = lang_cfg["first_message"]
+    prompt_lang   = lang_cfg["prompt_lang"]
 
     system_prompt = (
         f"You are a slope safety field advisor speaking to a mountain farmer. "
         f"The farmer's slope audit result: Factor of Safety = {fos:.2f}, "
         f"risk level = {risk_level}, recommended treatment = {prescription}. "
-        f"Speak ONLY in {language}. Keep every reply under 2 short sentences. "
+        f"Speak ONLY in {prompt_lang}. Keep every reply under 2 short sentences. "
         f"Use simple farming language — no technical jargon. "
         f"If asked about safety, refer to the FoS score and treatment recommendation."
     )
 
     return {
         "url": signed_url,
-        "language": language,
+        "language": resolved_language,
         "first_message": first_message,
         "system_prompt": system_prompt,
         "context": {
@@ -293,6 +335,7 @@ async def get_convai_url(
             "risk_level": risk_level,
             "prescription": prescription,
             "region": region,
+            "language": resolved_language,
         },
     }
 

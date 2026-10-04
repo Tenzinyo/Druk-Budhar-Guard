@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import type { AuditReport, Region } from './lib/api';
+import { REGION_DEFAULT_LANGUAGE } from './lib/api';
 import AuditForm from './components/AuditForm';
 import AuditResult from './components/AuditResult';
 import ConnectivityBadge from './components/ConnectivityBadge';
+import LanguagePicker from './components/LanguagePicker';
 import RoadBulletin from './components/RoadBulletin';
 
 type Tab = 'audit' | 'roads';
@@ -19,10 +21,12 @@ export default function App() {
     return p.get('action') === 'roads' ? 'roads' : 'audit';
   });
   const [region, setRegion] = useState<Region>('himalaya');
+  const [language, setLanguage] = useState<string>(REGION_DEFAULT_LANGUAGE['himalaya']);
   const [report, setReport] = useState<AuditReport | null>(null);
 
   function handleRegionChange(r: Region) {
     setRegion(r);
+    setLanguage(REGION_DEFAULT_LANGUAGE[r]);
     setReport(null);
   }
 
@@ -63,6 +67,9 @@ export default function App() {
         </select>
       </div>
 
+      {/* ── Language picker ── */}
+      <LanguagePicker region={region} language={language} onChange={setLanguage} />
+
       {/* ── Tab bar ── */}
       <nav style={{
         display: 'flex',
@@ -96,7 +103,7 @@ export default function App() {
       }}>
         {tab === 'audit' && (
           report
-            ? <AuditResult report={report} region={region} onClear={() => setReport(null)} />
+            ? <AuditResult report={report} region={region} language={language} onClear={() => setReport(null)} />
             : <AuditForm region={region} onResult={setReport} />
         )}
         {tab === 'roads' && <RoadBulletin region={region} />}

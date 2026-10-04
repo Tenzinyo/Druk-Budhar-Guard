@@ -5,11 +5,12 @@ import { resolveAudioUrl, synthesizeVoice } from '../lib/api';
 interface Props {
   report: AuditReport;
   region: Region;
+  language: string;
 }
 
 type State = 'idle' | 'loading' | 'ready' | 'error';
 
-export default function VoicePlayer({ report, region }: Props) {
+export default function VoicePlayer({ report, region, language }: Props) {
   const [state, setState] = useState<State>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [script, setScript] = useState<string | null>(null);
@@ -42,12 +43,12 @@ export default function VoicePlayer({ report, region }: Props) {
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', letterSpacing: '0.05em' }}>
-        VOICE ADVISORY
+        VOICE ADVISORY — {language.toUpperCase()}
       </div>
 
       {state === 'idle' && (
         <button className="btn-primary" onClick={handleSpeak} style={{ padding: '10px' }}>
-          Hear Advisory in Local Language
+          Hear Advisory in {language}
         </button>
       )}
 

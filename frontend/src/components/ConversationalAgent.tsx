@@ -20,15 +20,10 @@ import { getConvaiUrl } from '../lib/api';
 interface Props {
   report: AuditReport;
   region: Region;
+  language: string;
 }
 
 type AgentState = 'idle' | 'connecting' | 'listening' | 'thinking' | 'speaking' | 'error';
-
-const REGION_LANGUAGE: Record<string, string> = {
-  himalaya:    'Nepali',
-  andes:       'Spanish',
-  east_africa: 'Amharic',
-};
 
 const STATE_LABEL: Record<AgentState, string> = {
   idle:       '',
@@ -48,7 +43,7 @@ const STATE_COLOR: Record<AgentState, string> = {
   error:      'var(--color-critical)',
 };
 
-export default function ConversationalAgent({ report, region }: Props) {
+export default function ConversationalAgent({ report, region, language }: Props) {
   const [state, setState]         = useState<AgentState>('idle');
   const [transcript, setTranscript] = useState<{ role: 'user' | 'agent'; text: string }[]>([]);
   const [error, setError]         = useState<string | null>(null);
@@ -152,6 +147,7 @@ export default function ConversationalAgent({ report, region }: Props) {
         report.risk_level,
         report.fos_baseline,
         report.prescriptions[0]?.method ?? 'bioengineering',
+        language,
       );
 
       // 2. Create 16 kHz AudioContext
@@ -273,7 +269,6 @@ export default function ConversationalAgent({ report, region }: Props) {
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
-  const language = REGION_LANGUAGE[region] ?? 'Nepali';
   const isActive = state !== 'idle' && state !== 'error';
 
   return (
