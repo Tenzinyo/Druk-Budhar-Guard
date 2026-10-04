@@ -148,7 +148,7 @@ export interface VoiceSynthesisResponse {
 // ── API client ────────────────────────────────────────────────────────────────
 
 const BASE_URL: string =
-  (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL ??
+  (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL ||
   'http://localhost:8000';
 
 /** POST /audit/ — run a full slope stability audit */

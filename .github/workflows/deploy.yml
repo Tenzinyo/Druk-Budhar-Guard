@@ -37,7 +37,7 @@ jobs:
         working-directory: frontend
         env:
           GITHUB_ACTIONS: true
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:8000' }}
 
       - uses: actions/configure-pages@v4
 
