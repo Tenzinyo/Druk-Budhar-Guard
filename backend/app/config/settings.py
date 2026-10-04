@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     # --- Local Ollama (zero-cost, runs on-device) ---
     ollama_host: str = "http://localhost:11434"
-    ollama_model: str = "llama3.2:1b"
+    ollama_model: str = "llama3.2:latest"
     ollama_timeout_s: float = 30.0
 
     # --- ElevenLabs Creator Tier ---
@@ -26,13 +26,10 @@ class Settings(BaseSettings):
     elevenlabs_agent_id: str = ""
     elevenlabs_timeout_s: float = 20.0
 
-    # --- Bright Data Web Unlocker ---
+    # --- Bright Data Web Unlocker API ---
     brightdata_api_key: str = ""
-    brightdata_proxy_host: str = "brd.superproxy.io"
-    brightdata_proxy_port: int = 22225
-    brightdata_proxy_username: str = ""
-    brightdata_proxy_password: str = ""
-    brightdata_timeout_s: float = 10.0
+    brightdata_zone: str = "datacenter_proxy1_himalagri"
+    brightdata_timeout_s: float = 15.0
 
     # --- App ---
     default_region: str = "himalaya"

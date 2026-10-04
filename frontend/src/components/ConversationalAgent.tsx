@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { AuditReport, Region } from '../lib/api';
 import { getConvaiUrl, LANGUAGE_NATIVE } from '../lib/api';
+import { useT } from '../lib/i18n';
 
 interface Props {
   report: AuditReport;
@@ -25,13 +26,13 @@ interface Props {
 
 type AgentState = 'idle' | 'connecting' | 'listening' | 'thinking' | 'speaking' | 'error';
 
-const STATE_LABEL: Record<AgentState, string> = {
+const STATE_LABEL_KEY: Record<AgentState, keyof import('../lib/i18n').Translations | ''> = {
   idle:       '',
-  connecting: 'Connecting…',
-  listening:  'Listening — speak now',
-  thinking:   'Thinking…',
-  speaking:   'Agent speaking…',
-  error:      'Error',
+  connecting: 'connecting',
+  listening:  'listening',
+  thinking:   'thinking',
+  speaking:   'agentSpeaking',
+  error:      'connecting',
 };
 
 const STATE_COLOR: Record<AgentState, string> = {
@@ -44,6 +45,7 @@ const STATE_COLOR: Record<AgentState, string> = {
 };
 
 export default function ConversationalAgent({ report, region, language }: Props) {
+  const tr = useT(language);
   const [state, setState]         = useState<AgentState>('idle');
   const [transcript, setTranscript] = useState<{ role: 'user' | 'agent'; text: string }[]>([]);
   const [error, setError]         = useState<string | null>(null);
@@ -170,9 +172,6 @@ export default function ConversationalAgent({ report, region, language }: Props)
               first_message: first_message as string,
               language:      el_code as string,
             },
-            tts: {
-              voice_id: undefined, // use agent default voice
-            },
           },
         }));
 
@@ -278,7 +277,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', letterSpacing: '0.05em' }}>
-          VOICE ADVISOR — {LANGUAGE_NATIVE[language] ?? language}
+          {tr.voiceAdvisorHeader} — {LANGUAGE_NATIVE[language] ?? language}
         </div>
         {isActive && (
           <button
@@ -289,7 +288,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
               padding: '3px 10px', fontSize: '0.75rem', cursor: 'pointer',
             }}
           >
-            End call
+            {tr.endCall}
           </button>
         )}
       </div>
@@ -303,7 +302,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '14px' }}
           >
             <span style={{ fontSize: '1.5rem' }}>&#127897;</span>
-            Talk to Slope Advisor in {LANGUAGE_NATIVE[language] ?? language}
+            {tr.talkToAdvisor} {LANGUAGE_NATIVE[language] ?? language}
           </button>
           {error && (
             <div style={{ fontSize: '0.82rem', color: 'var(--color-critical)', lineHeight: 1.4 }}>
@@ -328,7 +327,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
               }}
             />
             <span style={{ fontSize: '0.83rem', color: STATE_COLOR[state] }}>
-              {STATE_LABEL[state]}
+              {STATE_LABEL_KEY[state] ? tr[STATE_LABEL_KEY[state] as keyof typeof tr] : ''}
             </span>
           </div>
 
@@ -342,7 +341,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
           >
             {transcript.length === 0 && (
               <div style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', textAlign: 'center', padding: '12px 0' }}>
-                Say something — the advisor will respond in {LANGUAGE_NATIVE[language] ?? language}
+                {tr.saySomething} {LANGUAGE_NATIVE[language] ?? language}
               </div>
             )}
             {transcript.map((t, i) => (
@@ -364,7 +363,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
                 }}
               >
                 <div style={{ fontSize: '0.65rem', color: 'var(--color-text-dim)', marginBottom: 3 }}>
-                  {t.role === 'user' ? 'You' : 'Advisor'}
+                  {t.role === 'user' ? tr.you : tr.advisor}
                 </div>
                 {t.text}
               </div>

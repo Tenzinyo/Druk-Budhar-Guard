@@ -11,6 +11,22 @@ An **offline-capable edge geotechnical slope auditor** and **nature-based bio-en
 
 It replaces fragile, multi-million dollar concrete retaining walls with **indigenous vegetative root stabilization** (Vetiver grass, local bamboo, brush-layering, live fascines) — validated by World Bank and ICIMOD geotechnical research — and delivers prescriptions as spoken audio notes in local languages to illiterate farmers.
 
+### Example: A Farmer in Sindhupalchok, Nepal
+
+Parbati is a 52-year-old rice farmer in a hillside village above the Melamchi river. After the monsoon, a section of the terrace wall above her paddy is cracking and bulging. The nearest road is 4 hours away. There is no geotechnical engineer within 200 km.
+
+1. **She opens BioTerrace Sentinel** on her Android phone — no internet needed.
+2. **She holds the phone flat against the slope face.** The tilt meter reads 38° live from the accelerometer.
+3. **She taps "Saturated / Monsoon"** — the app sets groundwater to full depth, reflecting the waterlogged soil after heavy rain.
+4. **She taps "Run Slope Audit".** In under 2 seconds, the engine calculates FoS = 0.81 — **CRITICAL**.
+5. **She taps "Hear Advisory in Nepali".** Ollama writes the prescription in Nepali script; ElevenLabs speaks it aloud:
+   > *"भिरालो ढल्ने खतरामा छ। अहिले नै Dendrocalamus बाँस एक हात गहिरो, दुई पाइला बीच-बीचमा लाइन लगाउनुहोस्।"*
+   > *(The slope is at risk of collapse. Plant Dendrocalamus bamboo now — one forearm deep, two paces between rows along the contour.)*
+6. **She checks the Roads tab.** The Melamchi–Kathmandu pass shows **RESTRICTED** — cached 3 hours ago from a Bright Data scrape. She knows not to attempt the journey today.
+7. **She calls the Slope Advisor** (ConvAI button) to ask follow-up questions — the ElevenLabs agent responds in Nepali.
+
+Total cost to Parbati: **zero**. Total cost to deploy: **zero additional cloud spend**.
+
 ---
 
 ## Challenge 4 Compliance

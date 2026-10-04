@@ -125,37 +125,32 @@ def _build_search_url(road_name: str, country: str) -> str:
     return f"https://www.google.com/search?{urlencode({'q': query, 'tbm': 'nws'})}"
 
 
-def _proxy_url() -> Optional[str]:
-    """Return Bright Data proxy URL, or None if credentials are not configured."""
-    u = settings.brightdata_proxy_username
-    p = settings.brightdata_proxy_password
-    if not u or not p:
-        return None
-    return (
-        f"http://{u}:{p}"
-        f"@{settings.brightdata_proxy_host}:{settings.brightdata_proxy_port}"
-    )
-
-
 async def _scrape_via_brightdata(url: str) -> Optional[str]:
     """
-    Fetch a URL via the Bright Data Web Unlocker proxy.
+    Fetch a URL via the Bright Data Web Unlocker API.
 
+    Uses the REST API (POST https://api.brightdata.com/request) rather than
+    a proxy, so no SSL interception or proxy config is needed.
     Returns raw HTML string on success, None on any failure.
-    SSL verification is disabled because Bright Data performs SSL interception.
     """
-    proxy = _proxy_url()
-    if not proxy:
-        return None  # No credentials → skip live scrape immediately
+    api_key = settings.brightdata_api_key
+    if not api_key:
+        return None  # No credentials → skip immediately
 
     try:
-        async with httpx.AsyncClient(
-            proxies={"http://": proxy, "https://": proxy},
-            verify=False,  # Bright Data SSL interception requires this
-            timeout=settings.brightdata_timeout_s,
-            headers={"User-Agent": "Mozilla/5.0 (compatible; BioTerraceSentinel/1.0)"},
-        ) as client:
-            resp = await client.get(url)
+        async with httpx.AsyncClient(timeout=settings.brightdata_timeout_s) as client:
+            resp = await client.post(
+                "https://api.brightdata.com/request",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_key}",
+                },
+                json={
+                    "zone": settings.brightdata_zone,
+                    "url": url,
+                    "format": "raw",
+                },
+            )
             resp.raise_for_status()
             return resp.text
     except Exception:

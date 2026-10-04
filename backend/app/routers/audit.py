@@ -99,6 +99,7 @@ async def slope_audit(payload: SlopeInput) -> AuditReport:
         risk_level=risk_baseline,
         prescriptions=prescription_result.prescriptions,
         region=payload.region,
+        language=payload.language,
     )
 
     # ── Assemble and return report ────────────────────────────────────────────

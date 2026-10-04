@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import type { Region, RoadBulletinResponse, RoadStatusItem } from '../lib/api';
 import { getRoadBulletin } from '../lib/api';
 import { getCachedBulletin, saveRoadBulletin } from '../lib/offlineStorage';
+import { useT } from '../lib/i18n';
 
 interface Props {
   region: Region;
+  language: string;
 }
 
 const SEVERITY_BADGE: Record<string, string> = {
@@ -14,11 +16,7 @@ const SEVERITY_BADGE: Record<string, string> = {
   critical: 'badge-critical',
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  open:       'OPEN',
-  closed:     'CLOSED',
-  restricted: 'LIMITED',
-};
+// STATUS_LABEL is now built per-render using translations — see component body
 
 const STATUS_COLOR: Record<string, string> = {
   open:       'var(--color-stable)',
@@ -26,13 +24,13 @@ const STATUS_COLOR: Record<string, string> = {
   restricted: 'var(--color-marginal)',
 };
 
-function RoadCard({ road }: { road: RoadStatusItem }) {
+function RoadCard({ road, statusLabel }: { road: RoadStatusItem; statusLabel: string }) {
   const color = STATUS_COLOR[road.status] ?? 'var(--color-text-dim)';
   return (
     <div className="card" style={{ borderLeft: `3px solid ${color}` }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{road.source_name}</span>
-        <span style={{ color, fontSize: '0.82rem', fontWeight: 700 }}>{STATUS_LABEL[road.status]}</span>
+        <span style={{ color, fontSize: '0.82rem', fontWeight: 700 }}>{statusLabel}</span>
       </div>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)' }}>{road.country}</span>
@@ -46,13 +44,19 @@ function RoadCard({ road }: { road: RoadStatusItem }) {
         </div>
       )}
       <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', marginTop: 4, opacity: 0.6 }}>
-        Updated: {new Date(road.last_updated).toLocaleString()}
+        {new Date(road.last_updated).toLocaleString()}
       </div>
     </div>
   );
 }
 
-export default function RoadBulletin({ region }: Props) {
+export default function RoadBulletin({ region, language }: Props) {
+  const tr = useT(language);
+  const STATUS_LABEL: Record<string, string> = {
+    open:       tr.roadOpen,
+    closed:     tr.roadClosed,
+    restricted: tr.roadRestricted,
+  };
   const [data, setData]       = useState<RoadBulletinResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
@@ -89,7 +93,7 @@ export default function RoadBulletin({ region }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {/* Header row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontWeight: 700, fontSize: '1rem' }}>Road Bulletin</span>
+        <span style={{ fontWeight: 700, fontSize: '1rem' }}>{tr.roadBulletin}</span>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           {data && (
             <span className={`badge ${sourceClass}`}>
@@ -128,7 +132,7 @@ export default function RoadBulletin({ region }: Props) {
       {/* Loading skeleton */}
       {loading && !data && (
         <div style={{ textAlign: 'center', color: 'var(--color-text-dim)', padding: '32px 0' }}>
-          Fetching road status…
+          {tr.fetchingRoads}
         </div>
       )}
 
@@ -145,14 +149,14 @@ export default function RoadBulletin({ region }: Props) {
       {/* Road cards */}
       {data && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {data.roads.map((road, i) => <RoadCard key={i} road={road} />)}
+          {data.roads.map((road, i) => <RoadCard key={i} road={road} statusLabel={STATUS_LABEL[road.status] ?? road.status} />)}
         </div>
       )}
 
       {/* Fetch timestamp */}
       {data && (
         <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', textAlign: 'center', opacity: 0.6 }}>
-          Fetched: {new Date(data.fetched_at).toLocaleString()}
+          {tr.fetchedAt}: {new Date(data.fetched_at).toLocaleString()}
         </div>
       )}
     </div>

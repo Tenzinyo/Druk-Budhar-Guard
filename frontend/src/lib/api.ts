@@ -79,6 +79,8 @@ export interface SlopeInput {
   gamma_w?: number;
   /** Region key — selects species palette. Default 'himalaya'. */
   region?: Region;
+  /** User-selected language for vernacular advisory. Empty = region default. */
+  language?: string;
 }
 
 export interface Prescription {
@@ -183,11 +185,12 @@ export async function synthesizeVoice(
   script: string,
   region: Region = 'himalaya',
   risk_level: string = 'MARGINAL',
+  language: string = '',
 ): Promise<VoiceSynthesisResponse> {
   const resp = await fetch(`${BASE_URL}/voice/synthesize`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ script, region, risk_level }),
+    body: JSON.stringify({ script, region, risk_level, language }),
   });
   if (!resp.ok) throw new Error(`Voice synthesis failed (HTTP ${resp.status})`);
   return resp.json() as Promise<VoiceSynthesisResponse>;

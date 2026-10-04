@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { AuditReport, Region } from './lib/api';
 import { REGION_DEFAULT_LANGUAGE } from './lib/api';
+import { useT } from './lib/i18n';
 import AuditForm from './components/AuditForm';
 import AuditResult from './components/AuditResult';
 import ConnectivityBadge from './components/ConnectivityBadge';
@@ -22,6 +23,7 @@ export default function App() {
   });
   const [region, setRegion] = useState<Region>('himalaya');
   const [language, setLanguage] = useState<string>(REGION_DEFAULT_LANGUAGE['himalaya']);
+  const tr = useT(language);
   const [report, setReport] = useState<AuditReport | null>(null);
 
   function handleRegionChange(r: Region) {
@@ -49,7 +51,7 @@ export default function App() {
             BioTerrace Sentinel
           </div>
           <div style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)' }}>
-            Slope auditor &middot; bio-prescriber
+            {tr.appSubtitle}
           </div>
         </div>
         <ConnectivityBadge />
@@ -90,7 +92,7 @@ export default function App() {
               fontSize: '0.9rem', cursor: 'pointer',
             }}
           >
-            {t === 'audit' ? 'Audit' : 'Roads'}
+            {t === 'audit' ? tr.auditTab : tr.roadsTab}
           </button>
         ))}
       </nav>
@@ -104,9 +106,9 @@ export default function App() {
         {tab === 'audit' && (
           report
             ? <AuditResult report={report} region={region} language={language} onClear={() => setReport(null)} />
-            : <AuditForm region={region} onResult={setReport} />
+            : <AuditForm region={region} language={language} onResult={setReport} />
         )}
-        {tab === 'roads' && <RoadBulletin region={region} />}
+        {tab === 'roads' && <RoadBulletin region={region} language={language} />}
       </main>
     </div>
   );

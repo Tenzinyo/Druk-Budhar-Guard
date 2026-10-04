@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { AuditReport, Region } from '../lib/api';
 import { resolveAudioUrl, synthesizeVoice, LANGUAGE_NATIVE } from '../lib/api';
+import { useT } from '../lib/i18n';
 
 interface Props {
   report: AuditReport;
@@ -11,6 +12,7 @@ interface Props {
 type State = 'idle' | 'loading' | 'ready' | 'error';
 
 export default function VoicePlayer({ report, region, language }: Props) {
+  const tr = useT(language);
   const [state, setState] = useState<State>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [script, setScript] = useState<string | null>(null);
@@ -20,13 +22,10 @@ export default function VoicePlayer({ report, region, language }: Props) {
     setState('loading');
     setError(null);
     try {
-      const text =
-        report.vernacular_script ??
-        `Slope risk is ${report.risk_level}. ` +
-        `Factor of safety: ${report.fos_baseline.toFixed(1)}. ` +
-        `Recommended treatment: ${report.prescriptions[0]?.method ?? 'bioengineering'}.`;
-
-      const res = await synthesizeVoice(text, region, report.risk_level);
+      const text = report.vernacular_script
+        ?? tr.riskFallback[report.risk_level as keyof typeof tr.riskFallback]
+        ?? report.risk_level;
+      const res = await synthesizeVoice(text, region, report.risk_level, language);
       setScript(res.script);
       if (res.audio_available && res.audio_endpoint) {
         setAudioUrl(resolveAudioUrl(res.audio_endpoint));
@@ -43,18 +42,18 @@ export default function VoicePlayer({ report, region, language }: Props) {
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', letterSpacing: '0.05em' }}>
-        VOICE ADVISORY — {LANGUAGE_NATIVE[language] ?? language}
+        {tr.voiceAdvisoryHeader} — {LANGUAGE_NATIVE[language] ?? language}
       </div>
 
       {state === 'idle' && (
         <button className="btn-primary" onClick={handleSpeak} style={{ padding: '10px' }}>
-          Hear Advisory in {LANGUAGE_NATIVE[language] ?? language}
+          {tr.hearAdvisory} {LANGUAGE_NATIVE[language] ?? language}
         </button>
       )}
 
       {state === 'loading' && (
         <div style={{ textAlign: 'center', color: 'var(--color-text-dim)', fontSize: '0.85rem', padding: '8px 0' }}>
-          Synthesizing voice…
+          {tr.synthesizing}
         </div>
       )}
 
@@ -85,7 +84,7 @@ export default function VoicePlayer({ report, region, language }: Props) {
               cursor: 'pointer', textAlign: 'left', padding: 0,
             }}
           >
-            Re-synthesize
+            {tr.resynthesize}
           </button>
         </>
       )}
@@ -97,7 +96,7 @@ export default function VoicePlayer({ report, region, language }: Props) {
             onClick={handleSpeak}
             style={{ background: 'none', border: 'none', color: 'var(--color-sage)', cursor: 'pointer', fontSize: '0.82rem' }}
           >
-            Retry
+            {tr.retry}
           </button>
         </div>
       )}

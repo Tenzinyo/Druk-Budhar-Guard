@@ -1,5 +1,6 @@
 import type { Region, LanguageOption } from '../lib/api';
 import { REGION_LANGUAGE_OPTIONS } from '../lib/api';
+import { useT } from '../lib/i18n';
 
 interface Props {
   region: Region;
@@ -9,11 +10,12 @@ interface Props {
 
 export default function LanguagePicker({ region, language, onChange }: Props) {
   const options: LanguageOption[] = REGION_LANGUAGE_OPTIONS[region];
+  const tr = useT(language);
 
   return (
     <div style={{ padding: '8px 16px 10px', background: 'var(--color-canopy)', flexShrink: 0 }}>
       <div style={{ fontSize: '0.68rem', color: 'var(--color-text-dim)', letterSpacing: '0.06em', marginBottom: 6 }}>
-        LANGUAGE
+        {tr.language}
       </div>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {options.map((opt) => {

@@ -64,6 +64,12 @@ class SlopeInput(BaseModel):
         description="Region config key. Selects species palette and soil defaults.",
     )
 
+    # --- Language ---
+    language: str = Field(
+        default="",
+        description="User-selected language for vernacular advisory (e.g. 'Hindi', 'Nepali'). Empty = region default.",
+    )
+
     @model_validator(mode="after")
     def hw_cannot_exceed_z(self) -> "SlopeInput":
         if self.h_w > self.z:

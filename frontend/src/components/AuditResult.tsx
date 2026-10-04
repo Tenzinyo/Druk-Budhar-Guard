@@ -1,6 +1,7 @@
 import type { AuditReport, Region } from '../lib/api';
 import ConversationalAgent from './ConversationalAgent';
 import VoicePlayer from './VoicePlayer';
+import { useT } from '../lib/i18n';
 
 interface Props {
   report: AuditReport;
@@ -29,20 +30,21 @@ function FoSBar({ value }: { value: number }) {
 }
 
 export default function AuditResult({ report, region, language, onClear }: Props) {
+  const tr = useT(language);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 
       {/* FoS summary card */}
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-          <span style={{ fontWeight: 700, fontSize: '1rem' }}>Audit Result</span>
+          <span style={{ fontWeight: 700, fontSize: '1rem' }}>{tr.auditResult}</span>
           <span className={`badge ${RISK_BADGE[report.risk_level]}`}>{report.risk_level}</span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>FoS — bare slope</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>{tr.fosBareSlopeLabel}</span>
               <span style={{ fontWeight: 600 }}>{report.fos_baseline.toFixed(2)}</span>
             </div>
             <FoSBar value={report.fos_baseline} />
@@ -50,16 +52,16 @@ export default function AuditResult({ report, region, language, onClear }: Props
 
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>FoS — after planting</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>{tr.fosAfterPlantingLabel}</span>
               <span style={{ fontWeight: 600, color: 'var(--color-stable)' }}>{report.fos_post_intervention.toFixed(2)}</span>
             </div>
             <FoSBar value={report.fos_post_intervention} />
           </div>
 
           <div style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', marginTop: 2, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <span>Improvement: <strong style={{ color: 'var(--color-sage)' }}>+{report.fos_improvement.toFixed(2)}</strong></span>
-            <span>Band: <strong style={{ color: 'var(--color-text)' }}>{report.slope_band}</strong></span>
-            <span>Post-risk: <span className={`badge ${RISK_BADGE[report.risk_level_post]}`} style={{ fontSize: '0.68rem' }}>{report.risk_level_post}</span></span>
+            <span>{tr.improvement}: <strong style={{ color: 'var(--color-sage)' }}>+{report.fos_improvement.toFixed(2)}</strong></span>
+            <span>{tr.band}: <strong style={{ color: 'var(--color-text)' }}>{report.slope_band}</strong></span>
+            <span>{tr.postRisk}: <span className={`badge ${RISK_BADGE[report.risk_level_post]}`} style={{ fontSize: '0.68rem' }}>{report.risk_level_post}</span></span>
           </div>
         </div>
       </div>
@@ -84,21 +86,21 @@ export default function AuditResult({ report, region, language, onClear }: Props
 
       {/* Prescriptions */}
       <div style={{ fontSize: '0.75rem', color: 'var(--color-text-dim)', fontWeight: 600, letterSpacing: '0.06em' }}>
-        BIO-ENGINEERING PRESCRIPTIONS
+        {tr.prescriptionsHeader}
       </div>
 
       {report.prescriptions.map((p, i) => (
         <div key={i} className="card" style={{ borderLeft: '3px solid var(--color-sage)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{p.method}</span>
-            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)' }}>Priority {p.priority}</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)' }}>{tr.priority} {p.priority}</span>
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--color-mist)', marginBottom: 6 }}>
             {p.species.join(' · ')}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)' }}>Spacing: {p.spacing_physical}</span>
-            <span style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)' }}>Depth: {p.depth_physical}</span>
+            <span style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)' }}>{tr.spacing}: {p.spacing_physical}</span>
+            <span style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)' }}>{tr.depth}: {p.depth_physical}</span>
           </div>
           {p.notes && (
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-dim)', marginTop: 6, fontStyle: 'italic' }}>
@@ -112,7 +114,7 @@ export default function AuditResult({ report, region, language, onClear }: Props
       {report.vernacular_script && (
         <div className="card" style={{ borderLeft: '3px solid var(--color-leaf)' }}>
           <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', marginBottom: 6, letterSpacing: '0.05em' }}>
-            LOCAL ADVISORY
+            {tr.localAdvisory}
           </div>
           <p style={{ margin: 0, lineHeight: 1.55, fontSize: '0.9rem' }}>{report.vernacular_script}</p>
         </div>
@@ -130,7 +132,7 @@ export default function AuditResult({ report, region, language, onClear }: Props
         onClick={onClear}
         style={{ background: 'transparent', border: '1px solid var(--color-leaf)', color: 'var(--color-sage)' }}
       >
-        Run Another Audit
+        {tr.runAnotherAudit}
       </button>
     </div>
   );

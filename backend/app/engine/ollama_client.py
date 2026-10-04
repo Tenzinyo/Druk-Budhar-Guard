@@ -47,6 +47,7 @@ def _build_prompt(
     risk_level: RiskLevel,
     prescriptions: list[Prescription],
     region: str,
+    language: str = "",
 ) -> str:
     """
     Build a concise Ollama prompt targeting < 140 character output.
@@ -55,7 +56,7 @@ def _build_prompt(
     sentence in the local language — suitable for ElevenLabs audio synthesis
     and audible to a farmer in a noisy field environment.
     """
-    language = _REGION_LANGUAGE.get(region, "Hindi")
+    language = language or _REGION_LANGUAGE.get(region, "Hindi")
     urgency = _RISK_URGENCY.get(risk_level, "Action is needed.")
 
     top_method = prescriptions[0].method if prescriptions else "vegetative planting"
@@ -76,6 +77,7 @@ async def translate_to_vernacular(
     risk_level: RiskLevel,
     prescriptions: list[Prescription],
     region: str,
+    language: str = "",
 ) -> Optional[str]:
     """
     Generate a vernacular advisory sentence via local Ollama.
@@ -98,7 +100,7 @@ async def translate_to_vernacular(
         A None return is not an error — the audit report remains complete.
     """
     try:
-        prompt = _build_prompt(fos, risk_level, prescriptions, region)
+        prompt = _build_prompt(fos, risk_level, prescriptions, region, language)
 
         async with httpx.AsyncClient(timeout=settings.ollama_timeout_s) as client:
             response = await client.post(
