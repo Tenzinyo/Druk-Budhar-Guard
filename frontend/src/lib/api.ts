@@ -17,25 +17,26 @@ export type Region = 'himalaya' | 'andes' | 'east_africa';
 
 export interface LanguageOption {
   value: string;
-  label: string;
+  label: string;       // English name (for aria-label / tooltip)
+  native: string;      // Name written in the language's own script
   country: string;
 }
 
 export const REGION_LANGUAGE_OPTIONS: Record<Region, LanguageOption[]> = {
   himalaya: [
-    { value: 'Nepali',   label: 'Nepali',    country: 'Nepal' },
-    { value: 'Hindi',    label: 'Hindi',     country: 'India' },
-    { value: 'Dzongkha', label: 'Dzongkha', country: 'Bhutan' },
+    { value: 'Nepali',   label: 'Nepali',   native: 'नेपाली',    country: 'Nepal' },
+    { value: 'Hindi',    label: 'Hindi',    native: 'हिन्दी',      country: 'India' },
+    { value: 'Dzongkha', label: 'Dzongkha', native: 'རྫོང་ཁ',    country: 'Bhutan' },
   ],
   andes: [
-    { value: 'Spanish',    label: 'Español',    country: 'All Andes' },
-    { value: 'Quechua',    label: 'Quechua',    country: 'Peru / Bolivia' },
-    { value: 'Portuguese', label: 'Português',  country: 'Brazil' },
+    { value: 'Spanish',    label: 'Spanish',    native: 'Español',   country: 'All Andes' },
+    { value: 'Quechua',    label: 'Quechua',    native: 'Runasimi',  country: 'Peru / Bolivia' },
+    { value: 'Portuguese', label: 'Portuguese', native: 'Português', country: 'Brazil' },
   ],
   east_africa: [
-    { value: 'Amharic', label: 'Amharic',   country: 'Ethiopia' },
-    { value: 'Swahili', label: 'Swahili',   country: 'Kenya / Tanzania' },
-    { value: 'French',  label: 'Français',  country: 'Rwanda / DRC' },
+    { value: 'Amharic', label: 'Amharic', native: 'አማርኛ',     country: 'Ethiopia' },
+    { value: 'Swahili', label: 'Swahili', native: 'Kiswahili', country: 'Kenya / Tanzania' },
+    { value: 'French',  label: 'French',  native: 'Français',  country: 'Rwanda / DRC' },
   ],
 };
 
@@ -44,6 +45,14 @@ export const REGION_DEFAULT_LANGUAGE: Record<Region, string> = {
   andes:       'Spanish',
   east_africa: 'Amharic',
 };
+
+/** Flat map from language value → native script name */
+export const LANGUAGE_NATIVE: Record<string, string> = Object.values(
+  REGION_LANGUAGE_OPTIONS,
+).flat().reduce<Record<string, string>>((acc, opt) => {
+  acc[opt.value] = opt.native;
+  return acc;
+}, {});
 export type RiskLevel = 'STABLE' | 'MARGINAL' | 'CRITICAL';
 export type RoadStatus = 'open' | 'closed' | 'restricted';
 export type RoadSeverity = 'none' | 'minor' | 'major' | 'critical';
@@ -196,7 +205,7 @@ export async function getConvaiUrl(
   fos: number,
   prescription: string,
   language?: string,
-): Promise<{ url: string; language: string; system_prompt: string; first_message: string; context: unknown }> {
+): Promise<{ url: string; language: string; el_code: string; system_prompt: string; first_message: string; context: unknown }> {
   const params = new URLSearchParams({
     region,
     risk_level,

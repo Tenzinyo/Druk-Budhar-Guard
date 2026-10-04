@@ -228,46 +228,58 @@ _REGION_DEFAULT_LANGUAGE: dict[str, str] = {
     "east_africa": "Amharic",
 }
 
-# Per-language config: first message in that language + name for system prompt
+# Per-language config: first message, system prompt name, ElevenLabs ISO code
+# el_code: ElevenLabs ConvAI language code for STT/TTS engine selection.
+# Unsupported languages (Dzongkha, Quechua) fall back to closest supported code
+# so the TTS still works; the system prompt handles vocabulary/script.
 _LANGUAGE_CONFIG: dict[str, dict[str, str]] = {
     # ── Himalaya ──────────────────────────────────────────────────────────────
     "Nepali": {
         "first_message": "नमस्ते! म तपाईंको भिरालो सुरक्षा सल्लाहकार हुँ। कुनै प्रश्न छ?",
         "prompt_lang":   "Nepali",
+        "el_code":       "hi",   # EL uses Hindi engine for Nepali (closest Devanagari)
     },
     "Hindi": {
         "first_message": "नमस्ते! मैं आपका ढलान सुरक्षा सलाहकार हूँ। कोई प्रश्न है?",
         "prompt_lang":   "Hindi",
+        "el_code":       "hi",
     },
     "Dzongkha": {
         "first_message": "ཀུཟུཟང་པོ་ལགས། ང་ཁྱེད་རང་གི་རི་རྒྱབ་བདེ་འཇགས་ཀྱི་གྲོས་མཁན་ཡིན།",
         "prompt_lang":   "Dzongkha",
+        "el_code":       "hi",   # No Dzongkha engine; Hindi is closest
     },
     # ── Andes ─────────────────────────────────────────────────────────────────
     "Spanish": {
         "first_message": "¡Hola! Soy su asesor de seguridad de pendientes. ¿Tiene alguna pregunta?",
         "prompt_lang":   "Spanish",
+        "el_code":       "es",
     },
     "Quechua": {
         "first_message": "Allinllachu! Noqam qanwan rimanaypaq kaypi kani. Ima tapukuytam munanki?",
         "prompt_lang":   "Quechua",
+        "el_code":       "es",   # No Quechua engine; Spanish is closest
     },
     "Portuguese": {
         "first_message": "Olá! Sou seu consultor de segurança de encostas. Tem alguma pergunta?",
         "prompt_lang":   "Portuguese",
+        "el_code":       "pt",
     },
     # ── East Africa ───────────────────────────────────────────────────────────
     "Amharic": {
         "first_message": "ሰላም! የቁልቁለት ደህንነት አማካሪ ነኝ። ጥያቄ አለዎት?",
         "prompt_lang":   "Amharic",
+        "el_code":       "ar",   # No Amharic engine; Arabic is closest Semitic
     },
     "Swahili": {
         "first_message": "Habari! Mimi ni mshauri wako wa usalama wa mteremko. Una swali?",
         "prompt_lang":   "Swahili",
+        "el_code":       "sw",
     },
     "French": {
         "first_message": "Bonjour! Je suis votre conseiller en sécurité des pentes. Avez-vous des questions?",
         "prompt_lang":   "French",
+        "el_code":       "fr",
     },
 }
 
@@ -312,9 +324,10 @@ async def get_convai_url(
 
     # Resolve language: explicit param > region default
     resolved_language = language if language in _LANGUAGE_CONFIG else _REGION_DEFAULT_LANGUAGE.get(region, "Nepali")
-    lang_cfg = _LANGUAGE_CONFIG.get(resolved_language, _LANGUAGE_CONFIG["Nepali"])
+    lang_cfg      = _LANGUAGE_CONFIG.get(resolved_language, _LANGUAGE_CONFIG["Nepali"])
     first_message = lang_cfg["first_message"]
     prompt_lang   = lang_cfg["prompt_lang"]
+    el_code       = lang_cfg["el_code"]
 
     system_prompt = (
         f"You are a slope safety field advisor speaking to a mountain farmer. "
@@ -328,6 +341,7 @@ async def get_convai_url(
     return {
         "url": signed_url,
         "language": resolved_language,
+        "el_code": el_code,
         "first_message": first_message,
         "system_prompt": system_prompt,
         "context": {

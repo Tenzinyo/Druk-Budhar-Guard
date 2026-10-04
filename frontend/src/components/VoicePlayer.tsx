@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { AuditReport, Region } from '../lib/api';
-import { resolveAudioUrl, synthesizeVoice } from '../lib/api';
+import { resolveAudioUrl, synthesizeVoice, LANGUAGE_NATIVE } from '../lib/api';
 
 interface Props {
   report: AuditReport;
@@ -43,12 +43,12 @@ export default function VoicePlayer({ report, region, language }: Props) {
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', letterSpacing: '0.05em' }}>
-        VOICE ADVISORY — {language.toUpperCase()}
+        VOICE ADVISORY — {LANGUAGE_NATIVE[language] ?? language}
       </div>
 
       {state === 'idle' && (
         <button className="btn-primary" onClick={handleSpeak} style={{ padding: '10px' }}>
-          Hear Advisory in {language}
+          Hear Advisory in {LANGUAGE_NATIVE[language] ?? language}
         </button>
       )}
 

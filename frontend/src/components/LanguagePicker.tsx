@@ -21,6 +21,7 @@ export default function LanguagePicker({ region, language, onChange }: Props) {
           return (
             <button
               key={opt.value}
+              aria-label={`${opt.label} — ${opt.country}`}
               onClick={() => onChange(opt.value)}
               style={{
                 padding: '5px 12px',
@@ -39,8 +40,8 @@ export default function LanguagePicker({ region, language, onChange }: Props) {
                 textAlign: 'center',
               }}
             >
-              <div>{opt.label}</div>
-              <div style={{ fontSize: '0.65rem', opacity: 0.7 }}>{opt.country}</div>
+              <div style={{ fontSize: '0.9rem' }}>{opt.native}</div>
+              <div style={{ fontSize: '0.62rem', opacity: 0.65 }}>{opt.country}</div>
             </button>
           );
         })}

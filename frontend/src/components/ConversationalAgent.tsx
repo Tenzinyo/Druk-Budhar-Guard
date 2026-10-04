@@ -15,7 +15,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { AuditReport, Region } from '../lib/api';
-import { getConvaiUrl } from '../lib/api';
+import { getConvaiUrl, LANGUAGE_NATIVE } from '../lib/api';
 
 interface Props {
   report: AuditReport;
@@ -142,7 +142,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
 
     try {
       // 1. Get signed WebSocket URL + context from backend
-      const { url, system_prompt, first_message, context } = await getConvaiUrl(
+      const { url, el_code, system_prompt, first_message, context } = await getConvaiUrl(
         region,
         report.risk_level,
         report.fos_baseline,
@@ -168,6 +168,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
             agent: {
               prompt:        { prompt: system_prompt as string },
               first_message: first_message as string,
+              language:      el_code as string,
             },
             tts: {
               voice_id: undefined, // use agent default voice
@@ -277,7 +278,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)', letterSpacing: '0.05em' }}>
-          VOICE ADVISOR — {language.toUpperCase()}
+          VOICE ADVISOR — {LANGUAGE_NATIVE[language] ?? language}
         </div>
         {isActive && (
           <button
@@ -302,7 +303,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '14px' }}
           >
             <span style={{ fontSize: '1.5rem' }}>&#127897;</span>
-            Talk to Slope Advisor in {language}
+            Talk to Slope Advisor in {LANGUAGE_NATIVE[language] ?? language}
           </button>
           {error && (
             <div style={{ fontSize: '0.82rem', color: 'var(--color-critical)', lineHeight: 1.4 }}>
@@ -341,7 +342,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
           >
             {transcript.length === 0 && (
               <div style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', textAlign: 'center', padding: '12px 0' }}>
-                Say something — the advisor will respond in {language}
+                Say something — the advisor will respond in {LANGUAGE_NATIVE[language] ?? language}
               </div>
             )}
             {transcript.map((t, i) => (
