@@ -327,7 +327,7 @@ export default function ConversationalAgent({ report, region, language }: Props)
               }}
             />
             <span style={{ fontSize: '0.83rem', color: STATE_COLOR[state] }}>
-              {STATE_LABEL_KEY[state] ? tr[STATE_LABEL_KEY[state] as keyof typeof tr] : ''}
+              {STATE_LABEL_KEY[state] ? (tr[STATE_LABEL_KEY[state] as keyof typeof tr] as string) : ''}
             </span>
           </div>
 
