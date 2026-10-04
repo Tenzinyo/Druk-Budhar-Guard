@@ -1,8 +1,4 @@
 # BioTerrace Sentinel (Druk-Bhudhar Guard)
-
-**Global AI Hack Nation — Challenge 4: Small AI for Development**
-*World Bank Track | MIT Club of Germany & MITCNC Collaboration*
-
 ---
 
 ## What It Does
