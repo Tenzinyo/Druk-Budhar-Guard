@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=Path(__file__).parent.parent.parent.parent / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # --- ElevenLabs Creator Tier ---
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = ""
+    elevenlabs_agent_id: str = ""
     elevenlabs_timeout_s: float = 20.0
 
     # --- Bright Data Web Unlocker ---

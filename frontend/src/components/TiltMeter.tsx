@@ -30,7 +30,7 @@ export default function TiltMeter({ angle, onChange }: Props) {
   const cleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    startSlopeAngleListener((deg) => onChange(deg)).then((fn) => {
+    startSlopeAngleListener((deg) => onChange(Math.min(89, Math.max(1, deg)))).then((fn) => {
       if (fn) { cleanupRef.current = fn; setLive(true); }
     });
     return () => { cleanupRef.current?.(); };

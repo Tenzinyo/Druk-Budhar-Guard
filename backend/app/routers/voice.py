@@ -45,7 +45,7 @@ from pathlib import Path
 from typing import Literal, Optional
 
 import httpx
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
@@ -217,6 +217,84 @@ async def synthesize_voice(payload: VoiceSynthesisRequest) -> VoiceSynthesisResp
         source="text_only",
         audio_endpoint=None,
     )
+
+
+# ── Conversational AI signed URL ──────────────────────────────────────────────
+
+_REGION_LANGUAGE: dict[str, str] = {
+    "himalaya": "Nepali",
+    "andes": "Spanish",
+    "east_africa": "Amharic",
+}
+
+_FIRST_MESSAGE: dict[str, str] = {
+    "himalaya": "नमस्ते! म तपाईंको भिरालो सुरक्षा सल्लाहकार हुँ। कुनै प्रश्न छ?",
+    "andes": "¡Hola! Soy su asesor de seguridad de pendientes. ¿Tiene alguna pregunta?",
+    "east_africa": "ሰላም! የቁልቁለት ደህንነት አማካሪ ነኝ። ጥያቄ አለዎት?",
+}
+
+
+@router.get(
+    "/convai-url",
+    summary="Get a signed ElevenLabs ConvAI WebSocket URL for the slope advisor agent",
+)
+async def get_convai_url(
+    region: str = Query(default="himalaya"),
+    risk_level: str = Query(default="STABLE"),
+    fos: float = Query(default=1.5),
+    prescription: str = Query(default="bioengineering"),
+) -> dict:
+    agent_id = settings.elevenlabs_agent_id
+    api_key  = settings.elevenlabs_api_key
+
+    if not agent_id or not api_key:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "ElevenLabs Conversational AI not configured. "
+                "Add ELEVENLABS_AGENT_ID and ELEVENLABS_API_KEY to .env."
+            ),
+        )
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                "https://api.elevenlabs.io/v1/convai/conversation/get_signed_url",
+                params={"agent_id": agent_id},
+                headers={"xi-api-key": api_key},
+            )
+            resp.raise_for_status()
+            signed_url: str = resp.json()["signed_url"]
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"ElevenLabs ConvAI sign-in failed: {exc}",
+        )
+
+    language = _REGION_LANGUAGE.get(region, "Nepali")
+    first_message = _FIRST_MESSAGE.get(region, _FIRST_MESSAGE["himalaya"])
+
+    system_prompt = (
+        f"You are a slope safety field advisor speaking to a mountain farmer. "
+        f"The farmer's slope audit result: Factor of Safety = {fos:.2f}, "
+        f"risk level = {risk_level}, recommended treatment = {prescription}. "
+        f"Speak ONLY in {language}. Keep every reply under 2 short sentences. "
+        f"Use simple farming language — no technical jargon. "
+        f"If asked about safety, refer to the FoS score and treatment recommendation."
+    )
+
+    return {
+        "url": signed_url,
+        "language": language,
+        "first_message": first_message,
+        "system_prompt": system_prompt,
+        "context": {
+            "fos": fos,
+            "risk_level": risk_level,
+            "prescription": prescription,
+            "region": region,
+        },
+    }
 
 
 # ── Audio retrieval endpoints ─────────────────────────────────────────────────

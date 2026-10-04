@@ -115,8 +115,14 @@ export async function runAudit(input: SlopeInput): Promise<AuditReport> {
     body: JSON.stringify(input),
   });
   if (!resp.ok) {
-    const detail = await resp.json().catch(() => ({}));
-    throw new Error(detail?.detail ?? `Audit request failed (HTTP ${resp.status})`);
+    const body = await resp.json().catch(() => ({}));
+    const detail = body?.detail;
+    const message = typeof detail === 'string'
+      ? detail
+      : Array.isArray(detail)
+        ? detail.map((d: { msg?: string }) => d.msg ?? JSON.stringify(d)).join('; ')
+        : `Audit request failed (HTTP ${resp.status})`;
+    throw new Error(message);
   }
   return resp.json() as Promise<AuditReport>;
 }

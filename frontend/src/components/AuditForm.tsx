@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { AuditReport, Region, SlopeInput } from '../lib/api';
 import { runAudit } from '../lib/api';
 import { saveAudit } from '../lib/offlineStorage';
+import { takePhoto } from '../lib/camera';
 import TiltMeter from './TiltMeter';
 
 interface Props {
@@ -16,6 +17,7 @@ export default function AuditForm({ region, onResult }: Props) {
   const [hw,     setHw]     = useState(0);
   const [cp,     setCp]     = useState(0);
   const [gamma,  setGamma]  = useState(18);
+  const [photo,   setPhoto]   = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
 
@@ -95,6 +97,46 @@ export default function AuditForm({ region, onResult }: Props) {
           </div>
         </div>
       </details>
+
+      {/* Camera capture */}
+      <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)', letterSpacing: '0.05em' }}>
+          SLOPE PHOTO (optional)
+        </div>
+        {photo ? (
+          <div style={{ position: 'relative' }}>
+            <img
+              src={photo}
+              alt="Slope capture"
+              style={{ width: '100%', borderRadius: 8, display: 'block', maxHeight: 220, objectFit: 'cover' }}
+            />
+            <button
+              type="button"
+              onClick={() => setPhoto(null)}
+              style={{
+                position: 'absolute', top: 6, right: 6,
+                background: 'rgba(0,0,0,0.55)', border: 'none', borderRadius: '50%',
+                color: '#fff', width: 28, height: 28, cursor: 'pointer', fontSize: '0.85rem',
+              }}
+            >
+              &times;
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={async () => { const p = await takePhoto(); if (p) setPhoto(p); }}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              background: 'rgba(74,154,74,0.12)', border: '1px dashed var(--color-sage)',
+              borderRadius: 8, padding: '12px 16px', cursor: 'pointer',
+              color: 'var(--color-sage)', fontSize: '0.9rem',
+            }}
+          >
+            <span style={{ fontSize: '1.3rem' }}>&#128247;</span> Take / Choose Photo
+          </button>
+        )}
+      </div>
 
       {error && (
         <div style={{

@@ -1,5 +1,5 @@
 import type { AuditReport, Region } from '../lib/api';
-import VoicePlayer from './VoicePlayer';
+import ConversationalAgent from './ConversationalAgent';
 
 interface Props {
   report: AuditReport;
@@ -116,8 +116,8 @@ export default function AuditResult({ report, region, onClear }: Props) {
         </div>
       )}
 
-      {/* Voice player */}
-      <VoicePlayer report={report} region={region} />
+      {/* Conversational voice advisor */}
+      <ConversationalAgent report={report} region={region} />
 
       {/* Run another */}
       <button
