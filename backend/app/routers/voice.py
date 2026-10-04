@@ -281,6 +281,11 @@ _LANGUAGE_CONFIG: dict[str, dict[str, str]] = {
         "prompt_lang":   "French",
         "el_code":       "fr",
     },
+    "English": {
+        "first_message": "Hello! I am your slope safety advisor. Do you have any questions?",
+        "prompt_lang":   "English",
+        "el_code":       "en",
+    },
 }
 
 
