@@ -27,16 +27,19 @@ export const REGION_LANGUAGE_OPTIONS: Record<Region, LanguageOption[]> = {
     { value: 'Nepali',   label: 'Nepali',   native: 'नेपाली',    country: 'Nepal' },
     { value: 'Hindi',    label: 'Hindi',    native: 'हिन्दी',      country: 'India' },
     { value: 'Dzongkha', label: 'Dzongkha', native: 'རྫོང་ཁ',    country: 'Bhutan' },
+    { value: 'English',  label: 'English',  native: 'English',   country: 'Global' },
   ],
   andes: [
     { value: 'Spanish',    label: 'Spanish',    native: 'Español',   country: 'All Andes' },
     { value: 'Quechua',    label: 'Quechua',    native: 'Runasimi',  country: 'Peru / Bolivia' },
     { value: 'Portuguese', label: 'Portuguese', native: 'Português', country: 'Brazil' },
+    { value: 'English',    label: 'English',    native: 'English',   country: 'Global' },
   ],
   east_africa: [
     { value: 'Amharic', label: 'Amharic', native: 'አማርኛ',     country: 'Ethiopia' },
     { value: 'Swahili', label: 'Swahili', native: 'Kiswahili', country: 'Kenya / Tanzania' },
     { value: 'French',  label: 'French',  native: 'Français',  country: 'Rwanda / DRC' },
+    { value: 'English', label: 'English', native: 'English',   country: 'Global' },
   ],
 };
 
